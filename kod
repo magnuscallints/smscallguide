@@ -1,0 +1,98 @@
+!^s::	;Sänder sms med betalningsuppgifter från QR21
+PK := "|"
+Förf := "?"
+Summa := "£"
+BG := "$"
+OCR := "¤"
+Regnr := "½"
+FileDelete,C:\Tmp\sms.txt
+Clipboard = 
+FileRead, TheText, \\dsl.ia.tsnet.se\dsl$\Modified\VTR\filer\smsny.txt
+BlockInput, On
+MouseGetPos, PosX, PosY
+Click,3
+Send ^c
+ClipWait, 1
+if ErrorLevel
+{
+    MsgBox, Något oväntat inträffade. Avbryter.
+    return
+}
+StringLower, clipboard, clipboard
+StringReplace, Clipboard, Clipboard, P-anmärkning, felparkeringsavgift
+StringReplace, pk2, clipboard, `r`n ,
+StringReplace, TheText, TheText,%pk%, %pk2%, All
+Clipboard =
+Mousemove, 244, %PosY%, R
+Click, 2
+Send ^c
+ClipWait, 1
+if ErrorLevel
+{
+    MsgBox, Något oväntat inträffade. Avbryter.
+    return
+}
+StringReplace, forf2, clipboard, `r`n ,
+Medbindesstreck := RegExReplace(forf2, "(\d{4})(\d{2})(\d{2})", "$1-$2-$3")
+StringReplace, TheText, TheText,%Förf%, %medbindesstreck%, All 
+Clipboard =
+Mousemove, 337, %PosY%, R
+Click, 2
+Send ^c
+ClipWait, 1
+if ErrorLevel
+{
+    MsgBox, Något oväntat inträffade. Avbryter.
+    return
+}
+StringReplace, sum2, clipboard, `r`n ,
+StringReplace, TheText, TheText,%Summa%, %sum2%, All 
+Clipboard =
+Mousemove, 420, %PosY%, R
+Click, 2
+Send ^c
+ClipWait, 1
+if ErrorLevel
+{
+    MsgBox, Något oväntat inträffade. Avbryter.
+    return
+}
+StringReplace, ocr2, clipboard, `r`n ,
+StringReplace, TheText, TheText,%OCR%, %ocr2%, All 
+Clipboard =
+Mousemove, 630, %PosY%, R
+Click, 3
+Send ^c
+ClipWait, 1
+if ErrorLevel
+{
+    MsgBox, Något oväntat inträffade. Avbryter.
+    return
+}
+StringReplace, bg2, clipboard, `r`n ,
+StringReplace, TheText, TheText,%BG%, %bg2%, All 
+Clipboard =
+CoordMode, Mouse, Client
+Click,104,184,3
+Send ^c
+ClipWait, 1
+if ErrorLevel
+{
+    MsgBox, Något oväntat inträffade. Avbryter.
+    return
+}
+StringReplace, reg2, clipboard, `r`n ,
+StringReplace, TheText, TheText,%Regnr%, %reg2%, All 
+Clipboard =
+FileAppend, %TheText%, C:\Tmp\sms.txt
+FileRead, Clipboard, C:\Tmp\sms.txt
+WinActivate, ahk_class TMainFrm
+send +^t
+sleep 200
+click 110,221,1
+send ^v
+sleep 200
+CoordMode, mouse, client
+SendEvent {click 666,130, down}{click 666,130, up}
+BlockInput, Off
+Return
